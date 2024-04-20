@@ -1,4 +1,5 @@
 import '@main/window/windowPreload';
+import { contextBridge, ipcRenderer } from 'electron/renderer';
 
 // Say something
 console.log('[ERWT] : Preload execution started');

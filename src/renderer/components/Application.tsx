@@ -4,15 +4,14 @@ import React, { useEffect, useState } from 'react';
 
 // import '@styles/app.scss';
 import { SquigglePlayground } from '@quri/squiggle-components';
+import { ipcRenderer } from 'electron';
 
 const Application: React.FC = () => {
   const [counter, setCounter] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
   const [versions, setVersions] = useState<Record<string, string>>({});
+  const [code, setCode] = useState('foo = normal(10,1)');
 
-  /**
-   * On component mount
-   */
   useEffect(() => {
     const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
     if (isNaN(useDarkTheme)) {
@@ -42,6 +41,22 @@ const Application: React.FC = () => {
     }
   }, [darkTheme]);
 
+  useEffect(() => {
+    // Function to handle the received data
+    const handleData = (data: { path: string; contents: string }) => {
+      setCode(data.contents);
+    };
+
+    // Subscribe to the "fromMain" channel
+    window.api.receive('file-contents', handleData);
+
+    // Cleanup on component unmount
+    return () => {
+      // Assuming you have a method to remove the listener
+      window.api.removeListener('file-contents', handleData); // You might need to implement removeListener method in your preload script
+    };
+  }, []);
+
   /**
    * Toggle Theme
    */
@@ -53,7 +68,7 @@ const Application: React.FC = () => {
     <div id='erwt' className=''>
       <div className='header'>
         <div className='bg-white'>
-          <SquigglePlayground defaultCode='foo = normal(5,2)' height={700} />
+          <SquigglePlayground defaultCode={code} height={700} key={code} />
         </div>
       </div>
 

@@ -67,6 +67,9 @@ const titlebarContext = {
   open_url(url: string) {
     ipcRenderer.invoke('open-url', url);
   },
+  open_file_explorer() {
+    ipcRenderer.invoke('open-file-explorer');
+  },
 };
 
 export type TitlebarContextApi = typeof titlebarContext;

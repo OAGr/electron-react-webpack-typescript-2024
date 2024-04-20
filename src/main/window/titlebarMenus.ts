@@ -28,6 +28,11 @@ const titlebarMenus: TitlebarMenu[] = [
     name: 'File',
     items: [
       {
+        name: 'Open',
+        action: 'open_file_explorer',
+        shortcut: 'Ctrl+O',
+      },
+      {
         name: 'Exit',
         action: 'exit',
       },
@@ -130,7 +135,7 @@ const titlebarMenus: TitlebarMenu[] = [
       {
         name: 'Maximize',
         action: 'toggle_maximize',
-        shortcut: 'Toggle'
+        shortcut: 'Toggle',
       },
       {
         name: 'Minimize',
