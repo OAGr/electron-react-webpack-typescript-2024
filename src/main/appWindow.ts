@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+
 import { registerTitlebarIpc } from '@main/window/titlebarIpc';
 
 // Electron Forge automatically creates these entry points

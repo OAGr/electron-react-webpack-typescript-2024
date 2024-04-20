@@ -1,5 +1,8 @@
 import { app, BrowserWindow } from 'electron';
+
 import { createAppWindow } from './appWindow';
+
+const { session } = require('electron');
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -12,6 +15,19 @@ if (require('electron-squirrel-startup')) {
  * Some APIs can only be used after this event occurs.
  */
 app.on('ready', createAppWindow);
+
+app.whenReady().then(() => {
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:",
+        ],
+      },
+    });
+  });
+});
 
 /**
  * Emitted when the application is activated. Various actions can

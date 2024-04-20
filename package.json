@@ -1,6 +1,6 @@
 {
-  "name": "erwt",
-  "productName": "ERWT",
+  "name": "squiggle-app",
+  "productName": "Squiggle",
   "version": "8.0.0",
   "description": "Robust project for developing Desktop Application with Electron, React, Webpack & TypeScript.",
   "main": ".webpack/main",
@@ -56,6 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "autoprefixer": "^10.4.19",
     "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.9.0",
@@ -67,6 +68,7 @@
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "node-loader": "^2.0.0",
+    "postcss-loader": "^8.1.1",
     "react-refresh": "^0.14.0",
     "sass": "^1.69.7",
     "sass-loader": "^13.3.3",
@@ -76,8 +78,11 @@
     "webpack": "^5.89.0"
   },
   "dependencies": {
+    "@quri/squiggle-components": "^0.9.3",
+    "@tailwindcss/forms": "^0.5.7",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.4.3"
   }
 }

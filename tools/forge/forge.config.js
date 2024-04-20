@@ -8,7 +8,7 @@ module.exports = {
     // Create asar archive for main, renderer process files
     asar: true,
     // Set executable name
-    executableName: 'ERWT',
+    executableName: 'Squiggle UI',
     // Set application copyright
     appCopyright: '© 2021-2024 Codesbiome, Guasam',
     // Set application icon
