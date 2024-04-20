@@ -10,7 +10,8 @@
  * @package : Titlebar IPC (Main Process)
  */
 
-import { BrowserWindow, ipcMain, shell } from 'electron';
+import { BrowserWindow, ipcMain, shell, dialog } from 'electron';
+const fs = require('fs');
 
 export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
   ipcMain.handle('window-minimize', () => {
@@ -91,5 +92,20 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
 
   ipcMain.handle('open-url', (e, url) => {
     shell.openExternal(url);
+  });
+
+  ipcMain.handle('open-file-explorer', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openFile'],
+    });
+    if (!canceled) {
+      console.log(filePaths);
+      const filePath = filePaths[0]; // Assuming single file selection for simplicity
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      mainWindow.webContents.send('file-contents', {
+        path: filePath,
+        contents: fileContents,
+      });
+    }
   });
 };

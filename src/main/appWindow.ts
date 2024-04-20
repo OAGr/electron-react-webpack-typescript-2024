@@ -13,7 +13,14 @@ let appWindow: BrowserWindow;
  * Create Application Window
  * @returns {BrowserWindow} Application Window Instance
  */
-export function createAppWindow(): BrowserWindow {
+export async function createAppWindow(): Promise<BrowserWindow> {
+  // let {canceled, filePaths} = await dialog.showOpenDialog({
+  //   properties: ['openFile', 'multiSelections', 'showHiddenFiles']
+  // })
+  // if (canceled) {
+  //   app.quit()
+  // }
+
   // Create new window instance
   appWindow = new BrowserWindow({
     width: 800,
