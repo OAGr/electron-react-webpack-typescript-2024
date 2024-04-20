@@ -2,13 +2,25 @@ import '@styles/app.css';
 
 import React, { useEffect, useState } from 'react';
 
-// import '@styles/app.scss';
+const { ipcRenderer } = window.Electron;
+
 import { SquigglePlayground } from '@quri/squiggle-components';
+
+declare global {
+  interface Window {
+    ipcRenderer: {
+      on: (channel: string, func: (...args: any[]) => void) => void;
+      removeAllListeners: (channel: string) => void;
+    };
+  }
+}
 
 const Application: React.FC = () => {
   const [counter, setCounter] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
   const [versions, setVersions] = useState<Record<string, string>>({});
+  const [filePath, setFilePath] = useState('');
+  const [fileContents, setFileContents] = useState('');
 
   /**
    * On component mount
@@ -28,6 +40,25 @@ const Application: React.FC = () => {
     const versions = JSON.parse(app.getAttribute('data-versions'));
     setVersions(versions);
   }, []);
+
+  // useEffect(() => {
+  //   const handleFileContents = (
+  //     event: Electron.IpcRendererEvent,
+  //     data: { path: string; contents: string },
+  //   ) => {
+  //     console.log('File path:', data.path);
+  //     console.log('File contents:', data.contents);
+  //     setFilePath(data.path); // Update state with the file path
+  //     setFileContents(data.contents); // Update state with the file contents
+  //   };
+
+  //   ipcRenderer.on('file-contents', handleFileContents);
+
+  //   // Cleanup the event listener when the component unmounts
+  //   return () => {
+  //     ipcRenderer.removeListener('file-contents', handleFileContents);
+  //   };
+  // }, []);
 
   /**
    * On Dark theme change
@@ -49,12 +80,14 @@ const Application: React.FC = () => {
     setDarkTheme(!darkTheme);
   }
 
+  console.log('WINDOW', window);
   return (
     <div id='erwt' className=''>
-      <div className='header'>
-        <div className='bg-white'>
-          <SquigglePlayground defaultCode='foo = normal(5,2)' height={700} />
-        </div>
+      <div className='header'></div>
+      {fileContents}
+      {filePath}
+      <div className='bg-white'>
+        <SquigglePlayground defaultCode='foo = normal(5,2)' height={700} />
       </div>
 
       <div className='footer'>

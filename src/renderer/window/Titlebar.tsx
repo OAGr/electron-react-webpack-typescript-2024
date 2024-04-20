@@ -10,13 +10,20 @@
  * @package : Window Titlebar (Component)
  */
 
-import React, { createRef, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  createRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import titlebarMenus from '@main/window/titlebarMenus';
 import classNames from 'classnames';
 import WindowControls from './WindowControls';
 import context from '@main/window/titlebarContextApi';
 import { WindowContext } from './WindowFrame';
 import './titlebar.scss';
+import { ipcRenderer } from 'electron';
 
 type Props = {
   title: string;
@@ -54,7 +61,9 @@ const Titlebar: React.FC<Props> = (props) => {
       if (activeMenuIndex.current != null) {
         if (
           menusRef[activeMenuIndex.current].current &&
-          !menusRef[activeMenuIndex.current].current?.contains(event.target as Node)
+          !menusRef[activeMenuIndex.current].current?.contains(
+            event.target as Node,
+          )
         ) {
           // console.log('You clicked outside of me!');
           closeActiveMenu();
@@ -93,9 +102,9 @@ const Titlebar: React.FC<Props> = (props) => {
       menusRef[activeMenuIndex.current].current?.classList.toggle('active');
       menusRef[index].current?.classList.toggle('active');
       menusRef[index].current?.parentElement?.classList.toggle('active');
-      menusRef[activeMenuIndex.current].current?.parentElement?.classList.toggle(
-        'active',
-      );
+      menusRef[
+        activeMenuIndex.current
+      ].current?.parentElement?.classList.toggle('active');
 
       activeMenuIndex.current = index;
     }
@@ -104,7 +113,9 @@ const Titlebar: React.FC<Props> = (props) => {
   function closeActiveMenu() {
     if (activeMenuIndex.current != null) {
       menusRef[activeMenuIndex.current].current?.classList.remove('active');
-      menusRef[activeMenuIndex.current]?.current?.parentElement?.classList.remove('active');
+      menusRef[
+        activeMenuIndex.current
+      ]?.current?.parentElement?.classList.remove('active');
       activeMenuIndex.current = null;
     }
   }
@@ -118,6 +129,11 @@ const Titlebar: React.FC<Props> = (props) => {
       } else {
         console.log(`action [${action}] is not available in titlebar context`);
       }
+    }
+    if (action === 'open_file_explorer') {
+      console.log('ACTION', 'open_file_explorer');
+
+      context.open_file_explorer();
     }
   }
 
