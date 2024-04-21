@@ -11,6 +11,7 @@ const Application: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState(true);
   const [versions, setVersions] = useState<Record<string, string>>({});
   const [code, setCode] = useState('foo = normal(10,1)');
+  const [path, setCurrentPath] = useState('');
 
   useEffect(() => {
     const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
@@ -45,6 +46,7 @@ const Application: React.FC = () => {
     // Function to handle the received data
     const handleData = (data: { path: string; contents: string }) => {
       setCode(data.contents);
+      setCurrentPath(data.path);
     };
 
     // Subscribe to the "fromMain" channel
@@ -64,11 +66,30 @@ const Application: React.FC = () => {
     setDarkTheme(!darkTheme);
   }
 
+  const saveFile = () => {
+    // Assuming `code` is the state variable holding the content you want to save
+    window.api
+      .saveFile(path, code)
+      .then(() => {
+        // File was saved successfully
+        console.log(`File saved to`);
+      })
+      .catch((error: any) => {
+        console.error('Failed to save file:', error);
+      });
+  };
+
   return (
     <div id='erwt' className=''>
       <div className='header'>
         <div className='bg-white'>
-          <SquigglePlayground defaultCode={code} height={700} key={code} />
+          <SquigglePlayground
+            defaultCode={code}
+            height={700}
+            key={path}
+            onCodeChange={setCode}
+            renderExtraControls={() => <div onClick={saveFile}>save!</div>}
+          />
         </div>
       </div>
 
@@ -76,8 +97,8 @@ const Application: React.FC = () => {
         <div className='center'>
           <button
             onClick={() => {
-              if (counter > 99) return alert('Going too high!!');
-              setCounter(counter + 1);
+              saveFile();
+              // ipcRenderer.send('save-file', 'foo.md', 'my doc');
             }}
           >
             Increment {counter != 0 ? counter : ''} <span>{counter}</span>

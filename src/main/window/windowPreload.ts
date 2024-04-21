@@ -19,4 +19,11 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
   },
+  saveFile: (fileName: string, content: string) => {
+    console.log('Save file', fileName, content);
+    return new Promise((resolve, reject) => {
+      ipcRenderer.invoke('save_file', { fileName, content });
+      resolve('true');
+    });
+  },
 });

@@ -33,6 +33,11 @@ const titlebarMenus: TitlebarMenu[] = [
         shortcut: 'Ctrl+O',
       },
       {
+        name: 'Save',
+        action: 'save_file',
+        shortcut: 'Ctrl+S',
+      },
+      {
         name: 'Exit',
         action: 'exit',
       },

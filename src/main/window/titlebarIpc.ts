@@ -94,9 +94,34 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
     shell.openExternal(url);
   });
 
+  ipcMain.handle(
+    'save_file',
+    async (
+      event,
+      { fileName, content }: { fileName: string; content: string },
+    ) => {
+      if (fileName === '') {
+        const { canceled, filePath } = await dialog.showSaveDialog({
+          title: 'Save File',
+          defaultPath: 'code.txt',
+          filters: [{ name: 'Text Files', extensions: ['txt'] }],
+        });
+        fileName = filePath;
+      }
+      console.log('Saving', fileName, content);
+
+      fs.writeFile(fileName, content, (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    },
+  );
+
   ipcMain.handle('open-file-explorer', async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
       properties: ['openFile'],
+      filters: [{ name: 'Squiggle Files', extensions: ['squiggle'] }],
     });
     if (!canceled) {
       const filePath = filePaths[0]; // Assuming single file selection for simplicity
