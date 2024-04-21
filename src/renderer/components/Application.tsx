@@ -90,13 +90,6 @@ const Application: React.FC = () => {
     };
   }, []);
 
-  /**
-   * Toggle Theme
-   */
-  function toggleTheme() {
-    setDarkTheme(!darkTheme);
-  }
-
   const saveFile = () => {
     // Assuming `code` is the state variable holding the content you want to save
     window.api
@@ -109,6 +102,28 @@ const Application: React.FC = () => {
         console.error('Failed to save file:', error);
       });
   };
+
+  useEffect(() => {
+    // Function to handle the save file action
+    const handleSaveFile = () => {
+      saveFile();
+    };
+
+    // Subscribe to the "save-file" channel
+    window.api.receive('save-file', handleSaveFile);
+
+    // Cleanup on component unmount
+    return () => {
+      // Assuming you have a method to remove the listener
+      window.api.removeListener('save-file', handleSaveFile); // Adjust based on your actual API
+    };
+  }, []);
+  /**
+   * Toggle Theme
+   */
+  function toggleTheme() {
+    setDarkTheme(!darkTheme);
+  }
 
   return (
     <div id='erwt' ref={containerRef} className='h-screen'>
