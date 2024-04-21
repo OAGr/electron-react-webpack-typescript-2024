@@ -26,4 +26,7 @@ contextBridge.exposeInMainWorld('api', {
       resolve('true');
     });
   },
+  getLocalStorageItem: (key: string) => {
+    return ipcRenderer.invoke('get-local-storage-item', key);
+  },
 });

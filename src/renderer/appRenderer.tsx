@@ -8,7 +8,7 @@ console.log('[ERWT] : Renderer execution started');
 
 // Application to Render
 const app = (
-  <WindowFrame title='Squiggle UI' platform='windows'>
+  <WindowFrame title='Squiggle UI' platform='mac'>
     <Application />
   </WindowFrame>
 );

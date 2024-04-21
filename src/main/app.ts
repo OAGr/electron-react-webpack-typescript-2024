@@ -1,4 +1,11 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  globalShortcut,
+  ipcRenderer,
+  Menu,
+} from 'electron';
 
 import { createAppWindow } from './appWindow';
 
@@ -16,9 +23,54 @@ if (require('electron-squirrel-startup')) {
  * initialization and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
-app.on('ready', createAppWindow);
+app.on('ready', () => {
+  createAppWindow();
+  const isMac = process.platform === 'darwin';
+
+  const menuTemplate = [
+    ...(isMac
+      ? [
+          {
+            label: 'Squiggle!',
+            submenu: [],
+          },
+        ]
+      : []),
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open',
+          click: () => {
+            console.log('Open clicked');
+          },
+          accelerator: 'CmdOrCtrl+O',
+        },
+        {
+          label: 'Save',
+          click: () => {
+            console.log('Save clicked');
+          },
+          accelerator: 'CmdOrCtrl+S',
+        },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+});
 
 app.whenReady().then(() => {
+  // globalShortcut.register('CommandOrControl+S', () => {
+  //   const { content, fileName } = ipcRenderer.sendSync('get-content');
+
+  //   // ipcRenderer.invoke('save-file', { content, fileName });
+  //   console.log('Save', { content, fileName });
+  // });
+  // globalShortcut.register('CommandOrControl+O', () => {
+  //   console.log('Open file');
+  // });
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
