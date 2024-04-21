@@ -70,6 +70,12 @@ const titlebarContext = {
   open_file_explorer() {
     ipcRenderer.invoke('open-file-explorer');
   },
+  save_file() {
+    const content = localStorage.getItem('fileContents') || '';
+    const fileName = localStorage.getItem('path') || '';
+    // console.log('HI---', content, fileName);
+    ipcRenderer.invoke('save-file', { content, fileName });
+  },
 };
 
 export type TitlebarContextApi = typeof titlebarContext;

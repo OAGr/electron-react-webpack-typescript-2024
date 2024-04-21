@@ -95,7 +95,7 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
   });
 
   ipcMain.handle(
-    'save_file',
+    'save-file',
     async (
       event,
       { fileName, content }: { fileName: string; content: string },

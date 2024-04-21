@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('api', {
   saveFile: (fileName: string, content: string) => {
     console.log('Save file', fileName, content);
     return new Promise((resolve, reject) => {
-      ipcRenderer.invoke('save_file', { fileName, content });
+      ipcRenderer.invoke('save-file', { fileName, content });
       resolve('true');
     });
   },

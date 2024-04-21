@@ -45,6 +45,8 @@ const Application: React.FC = () => {
   useEffect(() => {
     // Function to handle the received data
     const handleData = (data: { path: string; contents: string }) => {
+      localStorage.setItem('path', data.path);
+      localStorage.setItem('fileContents', data.contents);
       setCode(data.contents);
       setCurrentPath(data.path);
     };
@@ -87,7 +89,10 @@ const Application: React.FC = () => {
             defaultCode={code}
             height={700}
             key={path}
-            onCodeChange={setCode}
+            onCodeChange={(code) => {
+              setCode(code);
+              localStorage.setItem('fileContents', code);
+            }}
             renderExtraControls={() => <div onClick={saveFile}>save!</div>}
           />
         </div>
