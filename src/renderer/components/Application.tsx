@@ -1,6 +1,6 @@
 import '@styles/app.css';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // import '@styles/app.scss';
 import { SquigglePlayground } from '@quri/squiggle-components';
@@ -12,6 +12,35 @@ const Application: React.FC = () => {
   const [versions, setVersions] = useState<Record<string, string>>({});
   const [code, setCode] = useState('foo = normal(10,1)');
   const [path, setCurrentPath] = useState('');
+  const [containerHeight, setContainerHeight] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (containerRef.current) {
+        setContainerHeight(containerRef.current.clientHeight);
+      }
+    };
+
+    // Initialize height
+    updateHeight();
+
+    // Create a resize observer to listen for changes in the container's size
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    // Cleanup
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
@@ -82,12 +111,12 @@ const Application: React.FC = () => {
   };
 
   return (
-    <div id='erwt' className=''>
+    <div id='erwt' ref={containerRef} className='h-screen'>
       <div className='header'>
         <div className='bg-white'>
           <SquigglePlayground
             defaultCode={code}
-            height={700}
+            height={containerHeight - 60}
             key={path}
             onCodeChange={(code) => {
               setCode(code);

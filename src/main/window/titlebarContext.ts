@@ -73,7 +73,6 @@ const titlebarContext = {
   save_file() {
     const content = localStorage.getItem('fileContents') || '';
     const fileName = localStorage.getItem('path') || '';
-    // console.log('HI---', content, fileName);
     ipcRenderer.invoke('save-file', { content, fileName });
   },
 };
