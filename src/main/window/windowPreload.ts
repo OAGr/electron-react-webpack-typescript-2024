@@ -8,13 +8,18 @@ contextBridge.exposeInMainWorld('electron_window', {
 
 contextBridge.exposeInMainWorld('api', {
   send: (channel: string, data: unknown) => {
-    const validChannels = ['file-contents', 'save-file'];
+    const validChannels = ['file-contents', 'save-file', 'open-file-explorer'];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
   receive: (channel: string, func: (...args: unknown[]) => void) => {
-    const validChannels = ['file-contents', 'save-file', 'window-height'];
+    const validChannels = [
+      'file-contents',
+      'save-file',
+      'window-height',
+      'open-file-explorer',
+    ];
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }

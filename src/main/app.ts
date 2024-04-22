@@ -5,9 +5,11 @@ import {
   globalShortcut,
   ipcRenderer,
   Menu,
+  dialog,
 } from 'electron';
 
 import { createAppWindow } from './appWindow';
+import { openAndReadFile } from './common/utils';
 
 const { session } = require('electron');
 const fs = require('fs');
@@ -42,7 +44,10 @@ app.on('ready', () => {
         {
           label: 'Open',
           click: () => {
-            console.log('Open clicked');
+            const win = BrowserWindow.getFocusedWindow();
+            if (win) {
+              openAndReadFile(win);
+            }
           },
           accelerator: 'CmdOrCtrl+O',
         },

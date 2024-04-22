@@ -10,6 +10,7 @@
  * @package : Titlebar IPC (Main Process)
  */
 
+import { openAndReadFile } from '@main/common/utils';
 import { BrowserWindow, ipcMain, shell, dialog } from 'electron';
 import fs from 'fs';
 
@@ -102,9 +103,9 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
     ) => {
       if (fileName === '') {
         const { canceled, filePath } = await dialog.showSaveDialog({
-          title: 'Save File',
-          defaultPath: 'code.txt',
-          filters: [{ name: 'Text Files', extensions: ['txt'] }],
+          title: 'Save your squiggle file',
+          defaultPath: 'myCode.squiggle',
+          filters: [{ name: 'Squiggle Files', extensions: ['squiggle'] }],
         });
         fileName = filePath;
       }
@@ -118,19 +119,7 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
     },
   );
 
-  ipcMain.handle('open-file-explorer', async () => {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      filters: [{ name: 'Squiggle Files', extensions: ['squiggle'] }],
-    });
-    if (!canceled) {
-      const filePath = filePaths[0]; // Assuming single file selection for simplicity
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      console.log(filePaths, fileContents);
-      mainWindow.webContents.send('file-contents', {
-        path: filePath,
-        contents: fileContents,
-      });
-    }
+  ipcMain.handle('open-file-explorer', () => {
+    openAndReadFile(mainWindow);
   });
 };

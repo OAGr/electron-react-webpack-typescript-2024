@@ -7,9 +7,7 @@ import { SquigglePlayground } from '@quri/squiggle-components';
 import { Button } from '@quri/ui';
 
 const Application: React.FC = () => {
-  const [counter, setCounter] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
-  const [versions, setVersions] = useState<Record<string, string>>({});
   const [code, setCode] = useState('foo = normal(10,1)');
   const [path, setCurrentPath] = useState('');
   const [containerHeight, setContainerHeight] = useState(0);
@@ -67,6 +65,7 @@ const Application: React.FC = () => {
   useEffect(() => {
     // Function to handle the save file action
     const handleSaveFile = () => {
+      console.log('SAVING FILE CALLED');
       saveFile();
     };
 
