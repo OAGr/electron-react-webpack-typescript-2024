@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // import '@styles/app.scss';
 import { SquigglePlayground } from '@quri/squiggle-components';
-import { ipcRenderer } from 'electron';
+import { Button } from '@quri/ui';
 
 const Application: React.FC = () => {
   const [counter, setCounter] = useState(0);
@@ -14,33 +14,6 @@ const Application: React.FC = () => {
   const [path, setCurrentPath] = useState('');
   const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (containerRef.current) {
-        setContainerHeight(containerRef.current.clientHeight);
-      }
-    };
-
-    // Initialize height
-    updateHeight();
-
-    // Create a resize observer to listen for changes in the container's size
-    const resizeObserver = new ResizeObserver(() => {
-      updateHeight();
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    // Cleanup
-    return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
@@ -126,47 +99,28 @@ const Application: React.FC = () => {
   }
 
   return (
-    <div id='erwt' ref={containerRef} className='h-screen'>
-      <div className='header'>
-        <div className='bg-white'>
-          <SquigglePlayground
-            defaultCode={code}
-            height={containerHeight - 60}
-            key={path}
-            onCodeChange={(code) => {
-              setCode(code);
-              localStorage.setItem('fileContents', code);
-            }}
-            renderExtraControls={() => <div onClick={saveFile}>save!</div>}
-          />
-        </div>
-      </div>
-
-      <div className='footer'>
-        <div className='center'>
-          <button
-            onClick={() => {
-              saveFile();
-              // ipcRenderer.send('save-file', 'foo.md', 'my doc');
-            }}
-          >
-            Increment {counter != 0 ? counter : ''} <span>{counter}</span>
-          </button>
-          &nbsp;&nbsp; &nbsp;&nbsp;
-          <button
-            onClick={() => {
-              if (counter == 0) return alert('Oops.. thats not possible!');
-              setCounter(counter > 0 ? counter - 1 : 0);
-            }}
-          >
-            Decrement <span>{counter}</span>
-          </button>
-          &nbsp;&nbsp; &nbsp;&nbsp;
-          <button onClick={toggleTheme}>
-            {darkTheme ? 'Light Theme' : 'Dark Theme'}
-          </button>
-        </div>
-      </div>
+    <div
+      id='erwt'
+      ref={containerRef}
+      className='bg-white'
+      style={{ height: containerHeight }}
+    >
+      <SquigglePlayground
+        defaultCode={code}
+        height={containerHeight}
+        key={path}
+        onCodeChange={(code) => {
+          setCode(code);
+          localStorage.setItem('fileContents', code);
+        }}
+        renderExtraControls={() => (
+          <div className='flex h-full items-center'>
+            <Button onClick={saveFile} theme={'primary'} size='small'>
+              Save
+            </Button>
+          </div>
+        )}
+      />
     </div>
   );
 };

@@ -40,6 +40,19 @@ export function createAppWindow(): BrowserWindow {
   // Show window when its ready to
   appWindow.on('ready-to-show', () => appWindow.show());
 
+  function handleResize() {
+    const [_, height] = appWindow.getSize();
+    const zoomFactor = appWindow.webContents.getZoomFactor();
+    const adjustedHeight = height / zoomFactor;
+    appWindow.webContents.send('window-height', adjustedHeight);
+  }
+
+  appWindow.on('resize', handleResize);
+
+  appWindow.webContents.on('did-finish-load', () => {
+    handleResize(); // Reuse the resize handler to send initial height
+  });
+
   // Register Inter Process Communication for main process
   registerMainIPC();
 
@@ -48,6 +61,9 @@ export function createAppWindow(): BrowserWindow {
     appWindow = null;
     app.quit();
   });
+
+  const [_, height] = appWindow.getSize();
+  appWindow.webContents.send('window-height', height);
 
   return appWindow;
 }

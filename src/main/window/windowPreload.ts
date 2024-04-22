@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
   receive: (channel: string, func: (...args: unknown[]) => void) => {
-    const validChannels = ['file-contents', 'save-file'];
+    const validChannels = ['file-contents', 'save-file', 'window-height'];
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }

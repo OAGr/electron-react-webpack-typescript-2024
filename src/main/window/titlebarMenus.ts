@@ -154,17 +154,6 @@ const titlebarMenus: TitlebarMenu[] = [
       },
     ],
   },
-  {
-    name: 'Credits',
-    items: [
-      {
-        name: 'Guasam',
-        action: 'open_url',
-        value: 'https://github.com/guasam',
-        shortcut: '@guasam',
-      },
-    ],
-  },
 ];
 
 export default titlebarMenus;
