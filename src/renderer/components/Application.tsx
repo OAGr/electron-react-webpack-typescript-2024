@@ -16,33 +16,21 @@ const Application: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const useDarkTheme = parseInt(localStorage.getItem('dark-mode'));
-    if (isNaN(useDarkTheme)) {
-      setDarkTheme(true);
-    } else if (useDarkTheme == 1) {
-      setDarkTheme(true);
-    } else if (useDarkTheme == 0) {
-      setDarkTheme(false);
-    }
+    const handleData = (height: number) => {
+      setContainerHeight(height - 28);
+    };
+    // Setup listener for window height response
+    window.api.receive('window-height', (height) => {
+      console.log('Window height is:', height);
+      handleData(height);
+      // Use the height as needed
+    });
 
-    // Apply verisons
-    const app = document.getElementById('app');
-    const versions = JSON.parse(app.getAttribute('data-versions'));
-    setVersions(versions);
+    // Cleanup
+    return () => {
+      window.api.removeListener('window-height', handleData);
+    };
   }, []);
-
-  /**
-   * On Dark theme change
-   */
-  useEffect(() => {
-    if (darkTheme) {
-      localStorage.setItem('dark-mode', '1');
-      document.body.classList.add('dark-mode');
-    } else {
-      localStorage.setItem('dark-mode', '0');
-      document.body.classList.remove('dark-mode');
-    }
-  }, [darkTheme]);
 
   useEffect(() => {
     // Function to handle the received data
