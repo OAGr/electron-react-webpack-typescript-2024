@@ -95,6 +95,18 @@ export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
     shell.openExternal(url);
   });
 
+  ipcMain.handle('get-file', async (event, { fileName }) => {
+    return new Promise((resolve, reject) => {
+      fs.readFile(fileName, 'utf8', (err, fileContents) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(fileContents);
+        }
+      });
+    });
+  });
+
   ipcMain.handle(
     'save-file',
     async (

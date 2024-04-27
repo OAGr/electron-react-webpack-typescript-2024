@@ -12,6 +12,9 @@ module.exports = {
       // Custom Aliases
       ...require('./webpack.aliases'),
     },
+    fallback: {
+      path: require.resolve('path-browserify'),
+    },
   },
   stats: 'minimal',
   /**

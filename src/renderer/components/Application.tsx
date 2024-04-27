@@ -4,12 +4,26 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // import '@styles/app.scss';
 import { SquigglePlayground } from '@quri/squiggle-components';
+import { SqLinker } from '@quri/squiggle-lang';
 import { Button } from '@quri/ui';
+
+export function parseSourceId(sourceId: string): string {
+  const regex = /file:(.+)/;
+  const match = sourceId.match(regex);
+
+  if (!match) {
+    throw new Error('Invalid import name');
+  }
+
+  const path = match[0].replace('file:', '');
+
+  return path;
+}
 
 const Application: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState(true);
   const [code, setCode] = useState('foo = normal(10,1)');
-  const [path, setCurrentPath] = useState('');
+  const [currentPath, setCurrentPath] = useState('');
   const [containerHeight, setContainerHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -17,14 +31,10 @@ const Application: React.FC = () => {
     const handleData = (height: number) => {
       setContainerHeight(height - 28);
     };
-    // Setup listener for window height response
     window.api.receive('window-height', (height) => {
-      console.log('Window height is:', height);
       handleData(height);
-      // Use the height as needed
     });
 
-    // Cleanup
     return () => {
       window.api.removeListener('window-height', handleData);
     };
@@ -32,8 +42,8 @@ const Application: React.FC = () => {
 
   useEffect(() => {
     // Function to handle the received data
-    const handleData = (data: { path: string; contents: string }) => {
-      localStorage.setItem('path', data.path);
+    const handleData = async (data: { path: string; contents: string }) => {
+      localStorage.setItem('currentPath', data.path);
       localStorage.setItem('fileContents', data.contents);
       setCode(data.contents);
       setCurrentPath(data.path);
@@ -52,10 +62,10 @@ const Application: React.FC = () => {
   const saveFile = () => {
     // Assuming `code` is the state variable holding the content you want to save
     window.api
-      .saveFile(path, code)
+      .saveFile(currentPath, code)
       .then(() => {
         // File was saved successfully
-        console.log(`File saved to`);
+        console.log(`File saved`);
       })
       .catch((error: any) => {
         console.error('Failed to save file:', error);
@@ -65,7 +75,6 @@ const Application: React.FC = () => {
   useEffect(() => {
     // Function to handle the save file action
     const handleSaveFile = () => {
-      console.log('SAVING FILE CALLED');
       saveFile();
     };
 
@@ -78,13 +87,21 @@ const Application: React.FC = () => {
       window.api.removeListener('save-file', handleSaveFile); // Adjust based on your actual API
     };
   }, []);
-  /**
-   * Toggle Theme
-   */
-  function toggleTheme() {
-    setDarkTheme(!darkTheme);
-  }
 
+  const squiggleLinker: SqLinker = {
+    resolve(name: string) {
+      return name;
+    },
+    async loadSource(sourceId: string) {
+      const relativePath = parseSourceId(sourceId);
+      const modelCode = await window.api.getFile(currentPath, relativePath);
+      if (!modelCode) {
+        throw new Error('File not found');
+      }
+
+      return modelCode;
+    },
+  };
   return (
     <div
       id='erwt'
@@ -94,8 +111,9 @@ const Application: React.FC = () => {
     >
       <SquigglePlayground
         defaultCode={code}
+        linker={squiggleLinker}
         height={containerHeight}
-        key={path}
+        key={currentPath}
         onCodeChange={(code) => {
           setCode(code);
           localStorage.setItem('fileContents', code);

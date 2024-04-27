@@ -56,10 +56,8 @@ app.on('ready', () => {
           click: async () => {
             const win = BrowserWindow.getFocusedWindow();
             if (win) {
-              console.log('trying to send to webcontents');
               win.webContents.send('save-file');
             }
-            console.log('Save clicked');
           },
           accelerator: 'CmdOrCtrl+S',
         },
